@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRAS | Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #111827;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-bottom: 35px;
+        }
+
+        .menu {
+            display: block;
+            padding: 13px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            color: #d1d5db;
+            text-decoration: none;
+        }
+
+        .menu.active,
+        .menu:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+        .topbar p {
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .refresh-btn,
+        .register-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .refresh-btn:hover,
+        .register-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .card-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #2563eb;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 13px;
+            text-align: left;
+            padding: 14px;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .status {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 25px;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active-section {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="loginPage" style="
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f6f9;
+">
+
+    <div style="
+        width: 380px;
+        background: white;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    "> 
+
+        <h2 style="text-align:center; margin-bottom:10px;">
+            🔐 FRAS Login
+        </h2>
+
+        <p style="text-align:center; color:#666; margin-bottom:25px;">
+            Face Recognition Attendance System
+        </p>
+
+        <form onsubmit="login(event)" autocomplete="off">
+
+            <label>Username</label>
+
+            <input
+                type="text"
+                id="loginUsername"
+                autocomplete="off"
+                placeholder="Enter username"
+                required
+                style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                "
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="loginPassword"
+                autocomplete="off"
+                placeholder="Enter password"
+                required
+                style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                "
+            >
+
+            <button
+                type="submit"
+                style="
+                    width:100%;
+                    padding:12px;
+                    background:#2563eb;
+                    color:white;
+                    border:none;
+                    border-radius:6px;
+                    cursor:pointer;
+                    font-size:16px;
+                "
+            >
+                Login
+            </button>
+
+            <p
+                id="loginError"
+                style="
+                    color:red;
+                    text-align:center;
+                    margin-top:15px;
+                "
+            ></p>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="layout" id="dashboardApp" style="display:none;">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">FRAS</div>
+
+        <div class="subtitle">
+            Face Recognition Attendance System
+        </div>
+
+        <a class="menu active" href="javascript:void(0)" onclick="showSection('dashboard', this)">
+            Dashboard
+        </a>
+
+        <a class="menu" href="javascript:void(0)" onclick="showSection('register', this)">
+            Register Student
+        </a>
+
+        <a class="menu" href="javascript:void(0)" onclick="showSection('face-register', this)">
+            Face Registration
+        </a>
+
+        <a class="menu" href="javascript:void(0)" onclick="showSection('students', this)">
+            Students
+        </a>
+
+        <a class="menu" href="javascript:void(0)" onclick="showSection('attendance', this)">
+            Attendance
+        </a>
+        <button onclick="logout()" style="
+             width: 100%;
+             padding: 10px;
+             margin-top: 20px;
+             background: #dc3545;
+             color: white;
+             border: none;
+             border-radius: 6px;
+             cursor: pointer;
+        ">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+        <div id="dashboard" class="page-section active-section">
+
+        <!-- TOP BAR -->
+        <div class="topbar">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p>
+                    Welcome to Face Recognition Attendance System
+                </p>
+                <button class="refresh-btn" onclick="startRecognition()">
+                    Start Face Recognition
+                </button>
+            </div>
+
+            <button class="refresh-btn" onclick="loadData()">
+                Refresh Data
+            </button>
+
+        </div>
+
+
+        <!-- DASHBOARD CARDS -->
+        <div class="cards">
+
+            <div class="card">
+                <div class="card-title">
+                    Total Students
+                </div>
+
+                <div class="card-number" id="totalStudents">
+                    0
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">
+                    Total Attendance
+                </div>
+
+                <div class="card-number" id="totalAttendance">
+                    0
+                </div>
+            </div>
+        </div>
+
+            <div class="card">
+                <div class="card-title">
+                    Today's Attendance
+                </div>
+
+                <div class="card-number" id="todayAttendance">
+                    0
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- REGISTER STUDENT -->
+        <section class="section page-section" id="register">
+
+            <div class="section-header">
+                <h2>Register Student</h2>
+            </div>
+
+
+            <form id="registerForm" onsubmit="registerStudent(event)">
+
+                <div class="form-group">
+
+                    <label for="studentId">
+                        Student ID
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentId"
+                        placeholder="Enter Student ID e.g. MCA001"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="studentName">
+                        Student Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentName"
+                        placeholder="Enter Student Name"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="register-btn"
+                >
+                    Register Student
+                </button>
+
+            </form>
+
+
+            <div
+                id="registerMessage"
+                class="message"
+            ></div>
+
+        </section>
+
+        <!-- FACE REGISTRATION -->
+<section class="section page-section" id="face-register">
+
+    <div class="section-header">
+        <h2>Face Registration</h2>
+    </div>
+
+    <form id="faceForm" onsubmit="registerFace(event)">
+
+        <div class="form-group">
+            <label for="faceStudentId">
+                Student ID
+            </label>
+
+            <input
+                type="text"
+                id="faceStudentId"
+                placeholder="Enter Student ID e.g. MCA001"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="faceImage">
+                Select Face Image
+            </label>
+
+            <input
+                type="file"
+                id="faceImage"
+                accept="image/*"
+                required
+            >
+        </div>
+
+<!-- CAMERA BUTTON -->
+<button
+    type="button"
+    class="register-btn"
+    onclick="startCamera()"
+    style="margin-top:10px;"
+>
+    Open Camera
+</button>
+
+<div id="cameraBox" style="display:none; margin-top:20px;">
+
+    <video
+        id="camera"
+        width="400"
+        height="300"
+        autoplay
+        style="border-radius:10px;"
+    ></video>
+
+    <br><br>
+
+    <button
+        type="button"
+        class="register-btn"
+        onclick="captureFace()"
+    >
+        Capture Face
+    </button>
+
+    <canvas
+        id="canvas"
+        width="400"
+        height="300"
+        style="display:none;"
+    ></canvas>
+
+</div>
+
+        <button type="submit" class="register-btn">
+            Register Face
+        </button>
+
+    </form>
+
+    <div id="faceMessage" class="message"></div>
+
+</section>
+
+        <!-- STUDENTS -->
+        <section class="section page-section" id="students">
+
+            <div class="section-header">
+                <h2>Registered Students</h2>
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentsTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ATTENDANCE -->
+        <section class="section page-section" id="attendance">
+
+            <div class="section-header">
+                <h2>Attendance Records</h2>
+            </div>
+            <div style="margin: 15px 0;">
+                <input
+                    type="text"
+                    id="attendanceSearch"
+                    placeholder="Search by Student ID or Name..."
+                    onkeyup="filterAttendance()"
+                    style="
+                        width: 100%;
+                        max-width: 400px;
+                        padding: 12px;
+                        border: 1px solid #d1d5db;
+                        border-radius: 8px;
+                        font-size: 14px;
+                    "
+                >
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="attendanceTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const API_URL = "http://127.0.0.1:8000";
+
+function authHeaders(extraHeaders = {}) {
+    const token = localStorage.getItem("fras_token");
+
+    return {
+        ...extraHeaders,
+        "Authorization": `Bearer ${token}`
+    };
+}
+
+async function login(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("loginUsername").value;
+    const password = document.getElementById("loginPassword").value;
+    const loginError = document.getElementById("loginError");
+
+    loginError.textContent = "";
+
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            loginError.textContent = data.detail || "Invalid username or password";
+            return;
+        }
+
+        localStorage.setItem("fras_token", data.access_token);
+
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboardApp").style.display = "flex";
+
+        loadData();
+
+    } catch (error) {
+        loginError.textContent = "Backend server se connection nahi ho raha.";
+    }
+}
+
+// LOGOUT FUNCTION
+function logout() {
+    localStorage.removeItem("fras_token");
+
+    document.getElementById("dashboardApp").style.display = "none";
+    document.getElementById("loginPage").style.display = "flex";
+
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
+}
+
+
+// REGISTER STUDENT
+async function registerStudent(event) {
+
+    event.preventDefault();
+
+    const student_id =
+        document.getElementById("studentId").value.trim();
+
+    const name =
+        document.getElementById("studentName").value.trim();
+
+    const message =
+        document.getElementById("registerMessage");
+
+
+    try {
+
+        const response = await fetch(
+            API_URL + "/register",
+            {
+                method: "POST",
+
+                headers: authHeaders({
+                    "Content-Type": "application/json"
+                }),
+
+                body: JSON.stringify({
+                    student_id: student_id,
+                    name: name
+                })
+            }
+        );
+
+
+        const result = await response.json();
+
+
+        if (response.ok) {
+
+            message.style.color = "#15803d";
+
+            message.innerText =
+                "Student registered successfully!";
+
+            document
+                .getElementById("registerForm")
+                .reset();
+
+            await loadStudents();
+
+        } else {
+
+            message.style.color = "#dc2626";
+
+            message.innerText =
+                result.detail || "Registration failed.";
+
+        }
+
+    } catch (error) {
+
+        message.style.color = "#dc2626";
+
+        message.innerText =
+            "Backend server se connection nahi ho raha.";
+
+        console.error(error);
+
+    }
+
+}
+
+// REGISTER FACE
+async function registerFace(event) {
+
+    event.preventDefault();
+
+    const studentId =
+        document.getElementById("faceStudentId").value.trim();
+
+    const image =
+        document.getElementById("faceImage").files[0];
+
+    const message =
+        document.getElementById("faceMessage");
+
+    if (!studentId || !image) {
+        message.style.color = "#dc2626";
+        message.innerText = "Student ID aur image select karo.";
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("student_id", studentId);
+    formData.append("file", image);
+
+    try {
+
+        const response = await fetch(
+            API_URL + "/register-face",
+            {
+                method: "POST",
+                headers: authHeaders(),
+                body: formData
+            }
+        );
+
+        const result = await response.json();
+
+        if (response.ok) {
+
+            message.style.color = "#15803d";
+
+            message.innerText =
+                "Face image registered successfully!";
+
+            document
+                .getElementById("faceForm")
+                .reset();
+
+        } else {
+
+            message.style.color = "#dc2626";
+
+            message.innerText =
+                result.detail || "Face registration failed.";
+        }
+
+    } catch (error) {
+
+        message.style.color = "#dc2626";
+
+        message.innerText =
+            "Backend server se connection nahi ho raha.";
+
+        console.error(error);
+    }
+}
+
+
+// LOAD STUDENTS
+async function loadStudents() {
+
+    try {
+
+        const response =
+            await fetch(API_URL + "/students", {
+                headers: authHeaders()
+            });
+
+        const students =
+            await response.json();
+
+
+        document.getElementById("totalStudents")
+            .innerText = students.length;
+
+
+        const table =
+            document.getElementById("studentsTable");
+
+        table.innerHTML = "";
+
+
+        if (students.length === 0) {
+
+            table.innerHTML =
+                `<tr>
+                    <td colspan="2" class="empty">
+                        No students registered
+                    </td>
+                </tr>`;
+
+            return;
+        }
+
+
+        students.forEach(student => {
+
+            const row =
+                document.createElement("tr");
+
+            row.innerHTML =
+               `<td>${student.student_id}</td>
+                <td>${student.name}</td>
+                <td>
+                   <button
+                     onclick="deleteStudent('${student.student_id}')"
+                     style="background:#dc2626;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">
+             Delete
+                 </button>
+              </td>`;
+            table.appendChild(row);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Students error:",
+            error
+        );
+
+    }
+
+}
+
+
+// LOAD ATTENDANCE
+async function loadAttendance() {
+
+    try {
+
+        const response =
+            await fetch(API_URL + "/attendance", {
+                headers: authHeaders()
+            });
+
+        const attendance =
+            await response.json();
+
+
+        document.getElementById("totalAttendance")
+            .innerText = attendance.length;
+
+
+        const today =
+            new Date().toLocaleDateString("en-CA");
+
+
+        const todayRecords =
+            attendance.filter(
+                record => record.date === today
+            );
+
+
+        document.getElementById("todayAttendance")
+            .innerText = todayRecords.length;
+
+
+        const table =
+            document.getElementById("attendanceTable");
+
+        table.innerHTML = "";
+
+
+        if (attendance.length === 0) {
+
+            table.innerHTML =
+                `<tr>
+                    <td colspan="5" class="empty">
+                        No attendance records
+                    </td>
+                </tr>`;
+
+            return;
+        }
+
+
+        attendance.forEach(record => {
+
+            const row =
+                document.createElement("tr");
+
+            row.innerHTML =
+                `<td>${record.student_id}</td>
+                 <td>${record.name}</td>
+                 <td>${record.date}</td>
+                 <td>${record.time}</td>
+                 <td class="status">${record.status}</td>`;
+
+            table.appendChild(row);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Attendance error:",
+            error
+        );
+
+    }
+
+}
+
+
+// LOAD EVERYTHING
+async function loadData() {
+
+    await loadStudents();
+
+    await loadAttendance();
+
+}
+document.getElementById("loginUsername").value = "";
+document.getElementById("loginPassword").value = "";
+
+if (localStorage.getItem("fras_token")) {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("dashboardApp").style.display = "flex";
+
+    loadData();
+} else {
+    document.getElementById("loginPage").style.display = "flex";
+    document.getElementById("dashboardApp").style.display = "none";
+}
+
+function filterAttendance() {
+
+    const searchInput = document.getElementById("attendanceSearch");
+    const searchValue = searchInput.value.toLowerCase();
+
+    const table = document.getElementById("attendanceTable");
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+
+        const rowText = rows[i].innerText.toLowerCase();
+
+        if (rowText.includes(searchValue)) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
+async function deleteStudent(studentId) {
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete " + studentId + "?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            API_URL + "/students/" + studentId,
+            {
+                method: "DELETE",
+                headers: authHeaders()
+            }
+        );
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Student deleted successfully!");
+            await loadData();
+        } else {
+            alert(result.message || "Delete failed!");
+        }
+
+    } catch (error) {
+
+        console.error("Delete error:", error);
+        alert("Backend server se connection nahi ho raha.");
+
+    }
+}
+// START CAMERA
+async function startCamera() {
+
+    const cameraBox = document.getElementById("cameraBox");
+    const video = document.getElementById("camera");
+
+    try {
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true
+        });
+
+        video.srcObject = stream;
+        cameraBox.style.display = "block";
+
+    } catch (error) {
+
+        alert("Camera access nahi mil raha.");
+        console.error(error);
+
+    }
+}
+
+
+// CAPTURE FACE
+function captureFace() {
+
+    const video = document.getElementById("camera");
+    const canvas = document.getElementById("canvas");
+    const faceImage = document.getElementById("faceImage");
+
+    const context = canvas.getContext("2d");
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    canvas.toBlob(function(blob) {
+
+        const file = new File(
+            [blob],
+            "camera_face.jpg",
+            {
+                type: "image/jpeg"
+            }
+        );
+
+        const dataTransfer = new DataTransfer();
+
+        dataTransfer.items.add(file);
+
+        faceImage.files = dataTransfer.files;
+
+        alert("Face captured successfully!");
+
+        // Camera stop
+        const stream = video.srcObject;
+
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        video.srcObject = null;
+
+        document.getElementById("cameraBox").style.display = "none";
+
+    }, "image/jpeg");
+}
+async function startRecognition() {
+
+    try {
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true
+        });
+
+        const cameraBox = document.createElement("div");
+
+        cameraBox.style.marginTop = "20px";
+        cameraBox.style.padding = "20px";
+        cameraBox.style.background = "#f8fafc";
+        cameraBox.style.borderRadius = "12px";
+
+        const title = document.createElement("h3");
+        title.innerText = "Face Recognition Camera";
+
+        const video = document.createElement("video");
+
+        video.autoplay = true;
+        video.playsInline = true;
+        video.width = 400;
+        video.style.borderRadius = "10px";
+        video.style.display = "block";
+
+        const status = document.createElement("p");
+        const captureButton = document.createElement("button");
+
+        captureButton.innerText = "Capture & Recognize";
+        captureButton.className = "refresh-btn";
+        captureButton.style.marginTop = "10px";
+
+        cameraBox.appendChild(captureButton);
+        captureButton.onclick = async function () {
+
+    status.innerText = "Face capture ho raha hai...";
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const context = canvas.getContext("2d");
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    canvas.toBlob(async (blob) => {
+
+        const formData = new FormData();
+
+        formData.append(
+            "file",
+            blob,
+            "recognition.jpg"
+        );
+
+        status.innerText = "Face recognize ho raha hai...";
+
+        try {
+
+            const response = await fetch(
+                API_URL + "/recognize",
+                {
+                    method: "POST",
+                    headers: authHeaders(),
+                    body: formData
+                }
+            );
+
+            const result = await response.json();
+
+            console.log(result);
+
+            if (result.recognized) {
+
+                status.innerText =
+                    "✅ Recognized: " +
+                    result.student_id +
+                    " | Attendance: " +
+                    (
+                        result.attendance_marked
+                            ? "Marked"
+                            : "Already Marked"
+                    );
+
+                status.style.color = "#15803d";
+
+                loadData();
+
+            } else {
+
+                status.innerText =
+                    "❌ Face not recognized.";
+
+                status.style.color = "#dc2626";
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            status.innerText =
+                "❌ Recognition API se connection nahi ho raha.";
+
+            status.style.color = "#dc2626";
+        }
+
+    }, "image/jpeg");
+};
+        status.innerText = "Camera started. Face camera ke saamne rakho...";
+        status.style.marginTop = "10px";
+
+        cameraBox.appendChild(title);
+        cameraBox.appendChild(video);
+        cameraBox.appendChild(status);
+        const stopButton = document.createElement("button");
+
+        stopButton.innerText = "Stop Camera";
+        stopButton.className = "refresh-btn";
+        stopButton.style.marginTop = "10px";
+
+        stopButton.onclick = function () {
+
+            stream.getTracks().forEach(
+             track => track.stop()
+            );
+
+            cameraBox.remove();
+       };
+
+cameraBox.appendChild(stopButton);
+
+        const startButton = document.querySelector('button[onclick="startRecognition()"]');
+
+        startButton.parentElement.appendChild(cameraBox);
+
+        video.srcObject = stream;
+
+        // Camera ko properly start hone do
+        await video.play();
+
+        // 5 seconds baad photo capture
+        
+
+    } catch (error) {
+
+        alert(
+            "Camera Error: " +
+            error.name +
+            "\n" +
+            error.message
+        );
+
+        console.error(error);
+    }
+}
+
+function showSection(sectionId, menuElement) {
+
+    // Hide all sections
+    document.querySelectorAll(".page-section").forEach(section => {
+        section.classList.remove("active-section");
+    });
+
+    // Show selected section
+    const selectedSection = document.getElementById(sectionId);
+
+    if (selectedSection) {
+        selectedSection.classList.add("active-section");
+    }
+
+    // Remove active class from all menu items
+    document.querySelectorAll(".menu").forEach(menu => {
+        menu.classList.remove("active");
+    });
+
+    // Add active class to clicked menu
+    if (menuElement) {
+        menuElement.classList.add("active");
+    }
+}
+
+</script>
+
+</body>
+</html>
